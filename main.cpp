@@ -25,6 +25,7 @@ public:
     int food;    // 배부른 정도
     int clean;   // 깨끗한 정도
 
+
     animal();
 
     animal(std::string input_name, int input_age, int input_health, int input_food, int input_clean) {
