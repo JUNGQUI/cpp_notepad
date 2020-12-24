@@ -1,45 +1,44 @@
 #include <iostream>
+#include <string>
+#include <utility>
 
 //int main() {
 //    std::cout << "Hello, World!" << std::endl;
 //    return 0;
 //}
 
-
-typedef struct Animal {
-    char name[30];  // 이름
-    int age;        // 나이
-
-    int health;  // 체력
-    int food;    // 배부른 정도
-    int clean;   // 깨끗한 정도
-} Animal;
+//typedef struct Animal {
+//    char name[30];  // 이름
+//    int age;        // 나이
+//
+//    int health;  // 체력
+//    int food;    // 배부른 정도
+//    int clean;   // 깨끗한 정도
+//} Animal;
 
 class animal {
 public:
-    char name[30];  // 이름
+    std::string name;  // 이름
     int age;        // 나이
 
     int health;  // 체력
     int food;    // 배부른 정도
     int clean;   // 깨끗한 정도
 
-    animal(char *input_name, int input_age, int input_health, int input_food, int input_clean) {
-        strcpy(name, input_name);
+
+    animal();
+
+    animal(std::string input_name, int input_age, int input_health, int input_food, int input_clean) {
+        name=std::move(input_name);
         age=input_age;
         health=input_health;
         food=input_food;
         clean=input_clean;
     }
-
-    void setName(char _name[30]);
 };
-void animal::setName(char *_name) {
-    strcpy(name, _name);
-}
 
-void create_animal(Animal *_animal, animal *c_animal) {
-    char _name[30];
+animal * create_animal() {
+    std::string _name;
     std::cout << "동물의 이름? ";
     std::cin >> _name;
 
@@ -47,40 +46,27 @@ void create_animal(Animal *_animal, animal *c_animal) {
     int _age;
     std::cin >> _age;
 
-    strcpy(_animal->name, _name);
-
-    _animal->age = _age;
-    _animal->health = 100;
-    _animal->food = 100;
-    _animal->clean = 100;
-
-////    strcpy(c_animal->name, _name);
-//    c_animal->setName(_name);
-//    c_animal->age = _age;
-//    c_animal->health = 100;
-//    c_animal->food = 100;
-//    c_animal->clean = 100;
+    return new animal(_name, _age, 100, 100, 100);
 }
 
-void play(Animal *animal) {
+void play(animal *animal) {
     animal->health += 10;
     animal->food -= 20;
     animal->clean -= 30;
 }
-void one_day_pass(Animal *animal) {
+void one_day_pass(animal *animal) {
     // 하루가 지나면
     animal->health -= 10;
     animal->food -= 30;
     animal->clean -= 20;
 }
-void show_stat(Animal *animal) {
+void show_stat(animal *animal) {
     std::cout << animal->name << "의 상태" << std::endl;
     std::cout << "체력    : " << animal->health << std::endl;
     std::cout << "배부름 : " << animal->food << std::endl;
     std::cout << "청결    : " << animal->clean << std::endl;
 }
 int main() {
-    Animal *list[10];
     int animal_num = 0;
     animal *local_animal[10];
 
@@ -95,8 +81,8 @@ int main() {
         switch (input) {
             int play_with;
             case 1:
-                list[animal_num] = new Animal;
-                create_animal(list[animal_num], local_animal[animal_num]);
+                local_animal[animal_num] = create_animal();
+//                create_animal(list[animal_num], local_animal[animal_num]);
 
                 animal_num++;
                 break;
@@ -104,22 +90,22 @@ int main() {
                 std::cout << "누구랑 놀게? : ";
                 std::cin >> play_with;
 
-                if (play_with < animal_num) play(list[play_with]);
+                if (play_with < animal_num) play(local_animal[play_with]);
 
                 break;
 
             case 3:
                 std::cout << "누구껄 보게? : ";
                 std::cin >> play_with;
-                if (play_with < animal_num) show_stat(list[play_with]);
+                if (play_with < animal_num) show_stat(local_animal[play_with]);
                 break;
         }
 
         for (int i = 0; i != animal_num; i++) {
-            one_day_pass(list[i]);
+            one_day_pass(local_animal[i]);
         }
     }
     for (int i = 0; i != animal_num; i++) {
-        delete list[i];
+        delete local_animal[i];
     }
 }
